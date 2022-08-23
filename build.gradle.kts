@@ -47,7 +47,7 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
 
     //utils
-    implementation("com.google.guava:guava:r05")
+    implementation("com.google.guava:guava:31.1-jre")
 }
 
 tasks.withType<KotlinCompile> {
