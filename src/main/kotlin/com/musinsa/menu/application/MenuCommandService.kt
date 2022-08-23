@@ -3,6 +3,7 @@ package com.musinsa.menu.application
 import com.musinsa.menu.domain.model.Banner
 import com.musinsa.menu.domain.model.Menu
 import com.musinsa.menu.domain.repository.MenuRepository
+import com.musinsa.menu.exepction.CannotBeDeletedException
 import com.musinsa.menu.exepction.NoSuchMenuException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -31,5 +32,13 @@ class MenuCommandService(private val repository: MenuRepository) {
         banner?.let {
             saved.addBanner(it)
         }
+    }
+
+    fun delete(id: Long) {
+        var saved = repository.findById(id) ?: throw NoSuchMenuException()
+        if (saved.hasChildren()) {
+            throw CannotBeDeletedException()
+        }
+        repository.delete(saved)
     }
 }
