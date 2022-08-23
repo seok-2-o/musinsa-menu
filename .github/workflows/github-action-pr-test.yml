@@ -27,12 +27,10 @@ jobs:
         with:
           files: build/test-results/**/*.xml
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v3.4.1
-
-      - name: Coveralls GitHub Action
-        uses: coverallsapp/github-action@1.1.3
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./build/reports/jacoco/test/jacocoTestReport.xml
 
 

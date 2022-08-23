@@ -3,16 +3,27 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     id("org.springframework.boot") version "2.7.3"
     id("io.spring.dependency-management") version "1.0.13.RELEASE"
+    id("jacoco")
     kotlin("jvm") version "1.6.21"
     kotlin("plugin.spring") version "1.6.21"
     kotlin("plugin.jpa") version "1.6.21"
-    kotlin ("plugin.allopen") version "1.6.21"
-    kotlin ("plugin.noarg") version "1.6.21"
+    kotlin("plugin.allopen") version "1.6.21"
+    kotlin("plugin.noarg") version "1.6.21"
 }
 
 group = "com.musinsa"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
+
+jacoco {
+    toolVersion = "0.8.5"
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)
+    }
+}
 
 repositories {
     mavenCentral()
@@ -59,4 +70,18 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = "CLASS"
+
+            limit {
+                counter = "BRANCH"
+                value = "COVEREDRATIO"
+                minimum = "0.70".toBigDecimal()
+            }
+        }
+    }
 }
