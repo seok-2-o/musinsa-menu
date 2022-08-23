@@ -3,6 +3,7 @@ package com.musinsa.menu
 import com.musinsa.menu.domain.model.Banner
 import com.musinsa.menu.helper.AcceptanceTest
 import com.musinsa.menu.ui.CreateMenuCommand
+import com.musinsa.menu.ui.UpdateMenuCommand
 import io.restassured.http.ContentType
 import io.restassured.module.kotlin.extensions.Extract
 import io.restassured.module.kotlin.extensions.Given
@@ -47,7 +48,54 @@ class MenuApiTest : AcceptanceTest() {
         }
     }
 
-    fun `메뉴 등록`(title: String, location: String, parent: Long?, thumbnail: String?, target: String?): Response {
+    @Test
+    fun `메뉴의 속성을 변경할 수 있다`() {
+        var location = `메뉴 등록`("아우터", "/outer", null, null, null) Extract {
+            header("Location")
+        }
+        var id = location.replace("apis/menus/", "").toLong()
+        `메뉴 수정`(id, "상의", "/top") Then {
+            statusCode(HttpStatus.SC_NO_CONTENT)
+        }
+    }
+
+    @Test
+    fun `존재하지 않는 메뉴의 속성을 변경할 수 없다`() {
+        `메뉴 수정`(1L, "상의", "/top") Then {
+            statusCode(HttpStatus.SC_NOT_FOUND)
+        }
+    }
+
+    @Test
+    fun `하위 메뉴는 배너를 가질 수 없다_수정`() {
+        var 부모 = `메뉴 등록 후 아이디 응답`("아우터", "/outer", null, null, null)
+        var 자식 = `메뉴 등록 후 아이디 응답`("후드짚업", "outer/hood", 부모);
+        `메뉴 수정`(자식!!, "후드짚업", "outer/hood", 부모, "/imgs/autumn-outer.webp", "/autumn-outer") Then {
+            statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+        }
+    }
+
+
+    fun `메뉴 등록 후 아이디 응답`(
+        title: String,
+        location: String,
+        parent: Long? = null,
+        thumbnail: String? = null,
+        target: String? = null
+    ): Long? {
+        return `메뉴 등록`(title, location, parent, thumbnail, target) Extract {
+            header("Location").replace("apis/menus/", "").toLongOrNull()
+        }
+    }
+
+
+    fun `메뉴 등록`(
+        title: String,
+        location: String,
+        parent: Long? = null,
+        thumbnail: String? = null,
+        target: String? = null
+    ): Response {
         var banner: Banner? = null
         if (thumbnail != null && target != null) {
             banner = Banner(thumbnail, target)
@@ -58,6 +106,27 @@ class MenuApiTest : AcceptanceTest() {
             body(command)
         } When {
             post("/apis/menus")
+        }
+    }
+
+    fun `메뉴 수정`(
+        id: Long,
+        title: String,
+        location: String,
+        parent: Long? = null,
+        thumbnail: String? = null,
+        target: String? = null
+    ): Response {
+        var banner: Banner? = null
+        if (thumbnail != null && target != null) {
+            banner = Banner(thumbnail, target)
+        }
+        val command = UpdateMenuCommand(title, location, parent, banner)
+        return Given {
+            contentType(ContentType.JSON)
+            body(command)
+        } When {
+            put("/apis/menus/$id")
         }
     }
 }

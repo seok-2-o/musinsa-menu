@@ -30,4 +30,10 @@ class Menu(
         this.banner = banner
     }
 
+    fun update(title: String, location: String, parent: Menu? = null) {
+        this.title = title
+        this.location = location
+        this.parent = parent
+    }
+
 }
