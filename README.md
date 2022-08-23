@@ -24,8 +24,9 @@ Content-type : application/json;charset=utf-8
 {
     "parent" : {{상위메뉴 아이디}},
     "title" : {{메뉴 타이틀}}
-    "link" : {{메뉴 링크}} ,
-    "banner" : {{메뉴 배너}}  
+    "location" : {{메뉴 링크}} ,
+    "thubmnail" : {{배너 이미지}}  ,
+    "target" : {{배너 타겟 링크}}
 }
 
 응답 예) 
@@ -35,6 +36,7 @@ Content-type : application/json;charset=utf-8
 ```
 #### 메뉴 수정
 메뉴를 수정할 수 있다. 메뉴의 이름과 링크, 배너, 상위메뉴를 수정할 수있다.
+
 ```
 PUT apis/menus/{id}    
 Content-type : application/json;charset=utf-8  
@@ -42,8 +44,9 @@ Content-type : application/json;charset=utf-8
 {
     "parent" : {{상위메뉴 아이디}},
     "title" : {{메뉴 타이틀}}
-    "link" : {{메뉴 링크}} ,
-    "banner" : {{메뉴 배너}}  
+    "location" : {{메뉴 링크}} ,
+    "thubmnail" : {{배너 이미지}}  ,
+    "target" : {{배너 타겟 링크}}
 }
 
 응답 예) 
