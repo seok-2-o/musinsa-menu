@@ -7,4 +7,6 @@ interface MenuRepository {
     fun save(menu: Menu): Menu
 
     fun findById(id: Long): Menu?
+
+    fun findAllByParentIsNull(): List<Menu>
 }

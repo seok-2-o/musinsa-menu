@@ -11,6 +11,7 @@ import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
+import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.Test
 
 class MenuApiTest : AcceptanceTest() {
@@ -72,6 +73,20 @@ class MenuApiTest : AcceptanceTest() {
         var 자식 = `메뉴 등록 후 아이디 응답`("후드짚업", "outer/hood", 부모);
         `메뉴 수정`(자식!!, "후드짚업", "outer/hood", 부모, "/imgs/autumn-outer.webp", "/autumn-outer") Then {
             statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+        }
+    }
+
+    @Test
+    fun `최상위 메뉴 조회`() {
+        `메뉴 등록`("아우터", "/outer", null, "/imgs/autumn-outer.webp", "/autumn-outer")
+        `메뉴 등록`("상의", "/top")
+
+        When {
+            get("/apis/menus/root-menus")
+        } Then {
+            statusCode(HttpStatus.SC_OK)
+            body("menus[0].title", equalTo("아우터"))
+            body("menus[1].title", equalTo("상의"))
         }
     }
 
