@@ -9,4 +9,7 @@ interface MenuRepository {
     fun findById(id: Long): Menu?
 
     fun delete(menu: Menu)
+    
+    fun findAllByParentIsNull(): List<Menu>
+
 }

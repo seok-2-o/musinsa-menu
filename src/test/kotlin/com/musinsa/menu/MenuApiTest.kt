@@ -11,6 +11,7 @@ import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
+import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.Test
 
 internal class MenuApiTest : AcceptanceTest() {
@@ -91,6 +92,20 @@ internal class MenuApiTest : AcceptanceTest() {
         `메뉴 등록`("후드짚업2", "outer/hood2", 부모_ID)
         `메뉴 삭제`(부모_ID!!) Then {
             statusCode(HttpStatus.SC_BAD_REQUEST)
+        }
+    }
+    
+    @Test
+    fun `최상위 메뉴 조회`() {
+        `메뉴 등록`("아우터", "/outer", null, "/imgs/autumn-outer.webp", "/autumn-outer")
+        `메뉴 등록`("상의", "/top")
+
+        When {
+            get("/apis/menus/root-menus")
+        } Then {
+            statusCode(HttpStatus.SC_OK)
+            body("menus[0].title", equalTo("아우터"))
+            body("menus[1].title", equalTo("상의"))
         }
     }
 
