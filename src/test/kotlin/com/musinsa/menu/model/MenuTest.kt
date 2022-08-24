@@ -27,4 +27,12 @@ internal class MenuTest {
         assertThat(메뉴.location).isEqualTo("/top")
     }
 
+    @Test
+    fun `하위 메뉴가 있는지 확인 할 수 있다`() {
+        val 최상위_메뉴 = Menu("아우터", "/outer")
+        Menu("후드짚업", "/outer/hood", 최상위_메뉴)
+
+        assertThat(최상위_메뉴.hasChildren()).isTrue
+    }
+
 }

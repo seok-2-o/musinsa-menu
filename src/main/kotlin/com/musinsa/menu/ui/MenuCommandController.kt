@@ -22,4 +22,11 @@ class MenuCommandController(private val service: MenuCommandService) {
         return ResponseEntity.noContent()
             .build()
     }
+
+    @DeleteMapping("{id}")
+    fun update(@PathVariable id: Long): ResponseEntity<Void> {
+        service.delete(id)
+        return ResponseEntity.noContent()
+            .build()
+    }
 }

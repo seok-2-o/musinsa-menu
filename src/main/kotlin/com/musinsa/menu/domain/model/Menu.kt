@@ -10,11 +10,16 @@ class Menu(
     @Column(nullable = false)
     var location: String,
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PARENT_ID")
+    @JoinColumn(name = "parent_id")
     var parent: Menu? = null,
 ) {
+
+    init {
+        parent?.let { it.children.add(this) }
+    }
+
     @OneToMany(mappedBy = "parent")
-    var child: MutableList<Menu> = mutableListOf()
+    var children: MutableList<Menu> = mutableListOf()
 
     @Embedded
     var banner: Banner? = null
@@ -34,6 +39,10 @@ class Menu(
         this.title = title
         this.location = location
         this.parent = parent
+    }
+
+    fun hasChildren(): Boolean {
+        return this.children.isNotEmpty()
     }
 
 }

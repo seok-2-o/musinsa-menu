@@ -14,7 +14,7 @@ import org.apache.http.HttpStatus
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.Test
 
-class MenuApiTest : AcceptanceTest() {
+internal class MenuApiTest : AcceptanceTest() {
 
 
     @Test
@@ -76,6 +76,25 @@ class MenuApiTest : AcceptanceTest() {
         }
     }
 
+    @Test
+    fun `메뉴를 삭제할 수 있다`() {
+        var id = `메뉴 등록 후 아이디 응답`("아우터", "/outer", null, null, null)
+
+        `메뉴 삭제`(id!!) Then {
+            statusCode(HttpStatus.SC_NO_CONTENT)
+        }
+    }
+
+    @Test
+    fun `하위메뉴가 존재하는 경우 삭제할 수 없다`() {
+        var 부모_ID = `메뉴 등록 후 아이디 응답`("아우터", "/outer", null, null, null)
+        `메뉴 등록`("후드짚업", "outer/hood", 부모_ID)
+        `메뉴 등록`("후드짚업2", "outer/hood2", 부모_ID)
+        `메뉴 삭제`(부모_ID!!) Then {
+            statusCode(HttpStatus.SC_BAD_REQUEST)
+        }
+    }
+    
     @Test
     fun `최상위 메뉴 조회`() {
         `메뉴 등록`("아우터", "/outer", null, "/imgs/autumn-outer.webp", "/autumn-outer")
@@ -142,6 +161,12 @@ class MenuApiTest : AcceptanceTest() {
             body(command)
         } When {
             put("/apis/menus/$id")
+        }
+    }
+
+    fun `메뉴 삭제`(id: Long): Response {
+        return When {
+            delete("/apis/menus/$id")
         }
     }
 }
