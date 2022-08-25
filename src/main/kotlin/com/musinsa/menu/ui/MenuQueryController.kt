@@ -3,6 +3,7 @@ package com.musinsa.menu.ui
 import com.musinsa.menu.application.MenuQueryService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -17,6 +18,11 @@ class MenuQueryController(private val service: MenuQueryService) {
             .let { RootMenuResponses(it) }
             .let { ResponseEntity.ok(it) }
 
+    }
+
+    @GetMapping("/{id}")
+    fun getById(@PathVariable id: Long): ResponseEntity<MenuResponse> {
+        return ResponseEntity.ok(service.findByMenuWithChildren(id))
     }
 
 }

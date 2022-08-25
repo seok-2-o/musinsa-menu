@@ -11,6 +11,7 @@ import io.restassured.module.kotlin.extensions.Then
 import io.restassured.module.kotlin.extensions.When
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
+import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.Test
 
@@ -106,6 +107,50 @@ internal class MenuApiTest : AcceptanceTest() {
             statusCode(HttpStatus.SC_OK)
             body("menus[0].title", equalTo("아우터"))
             body("menus[1].title", equalTo("상의"))
+        }
+    }
+
+    @Test
+    fun `메뉴 조회`() {
+        val 최상위메뉴 = `메뉴 등록 후 아이디 응답`("아우터", "/outer", null, "/imgs/autumn-outer.webp", "/autumn-outer")
+        `메뉴 등록`("후드집업", "/outer/hood", 최상위메뉴)
+        val 하위메뉴 = `메뉴 등록 후 아이디 응답`("롱패딩", "/outer/long-goose", 최상위메뉴)
+        `메뉴 등록`("베스트", "/outer/long-goose/best", 하위메뉴)
+
+        When {
+            get("/apis/menus/$최상위메뉴")
+        } Then {
+            statusCode(HttpStatus.SC_OK)
+            body("children.size()", `is`(2))
+        }
+    }
+
+
+    @Test
+    fun `하위 메뉴 변경 후 조회`() {
+        val 최상위메뉴 = `메뉴 등록 후 아이디 응답`("아우터", "/outer", null, "/imgs/autumn-outer.webp", "/autumn-outer")
+        `메뉴 등록`("후드집업", "/outer/hood", 최상위메뉴)
+        val 하위메뉴 = `메뉴 등록 후 아이디 응답`("롱패딩", "/outer/long-goose", 최상위메뉴)
+        `메뉴 등록`("베스트", "/outer/long-goose/best", 하위메뉴)
+
+        When {
+            get("/apis/menus/$최상위메뉴")
+        } Then {
+            statusCode(HttpStatus.SC_OK)
+            body("children.size()", `is`(2))
+        } Extract {
+            println(body().asPrettyString())
+        }
+
+        `메뉴 수정`(하위메뉴!!, "숏패딩", "/outer/goose", 최상위메뉴)
+
+        When {
+            get("/apis/menus/$최상위메뉴")
+        } Then {
+            statusCode(HttpStatus.SC_OK)
+            body("children.size()", `is`(2))
+        } Extract {
+            println(body().asPrettyString())
         }
     }
 

@@ -3,8 +3,10 @@
 ## 🚀 Getting Started
 
 #### application 구동
+required java 17 +
 ```
 ./gradlew bootRun
+java -jar build/libs/*.jar
 ```
 
 ## 요구 사항
@@ -101,13 +103,12 @@ HTTP/1.1 200 OK
 {
     "id": 10001,
     "title" : "아우터"
-    "lint" : "/outer"
+    "location" : "/outer"
     "children" : [
         {
             "id": 10003,
             "title": "후드집엎",
-            "link": "outer/hood"
-            "order" : 1 
+            "location": "outer/hood"
         }
     ]
 }
